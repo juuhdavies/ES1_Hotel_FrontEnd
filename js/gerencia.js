@@ -50,15 +50,32 @@ async function buscarFaturamento(event) {
             const json = await resposta.json();
             const relatorio = json.relatorio || {};
 
-            document.getElementById('valor-hospedagem').textContent = `R$ ${parseFloat(relatorio.total_diarias || 0).toFixed(2)}`;
-            document.getElementById('valor-salas').textContent = `R$ ${parseFloat(relatorio.total_consumo || 0).toFixed(2)}`;
-            document.getElementById('valor-total').textContent = `R$ ${parseFloat(relatorio.faturamento_total || 0).toFixed(2)}`;
+            // Elementos dos Cards
+            const elHospedagem = document.getElementById('valor-hospedagem');
+            const elSalas = document.getElementById('valor-salas');
+            const elTotal = document.getElementById('valor-total');
+
+            // Card 1: Faturamento Hospedagem (Diárias + Consumo)
+            if (elHospedagem) {
+                elHospedagem.textContent = `R$ ${parseFloat(relatorio.faturamento_hospedagem || 0).toFixed(2)}`;
+            }
+            
+            // Card 2: Aluguel Conferências / Salas
+            if (elSalas) {
+                elSalas.textContent = `R$ ${parseFloat(relatorio.faturamento_conferencia || 0).toFixed(2)}`;
+            }
+            
+            // Card 3: Faturamento Total (Hospedagem + Conferência)
+            if (elTotal) {
+                elTotal.textContent = `R$ ${parseFloat(relatorio.faturamento_total || 0).toFixed(2)}`;
+            }
+        } else {
+            console.error("Erro na resposta da API de faturamento:", resposta.status);
         }
     } catch (erro) {
         console.error("Erro ao buscar faturamento:", erro);
     }
 }
-
 
 // ==========================================
 // TIPOS DE QUARTO (Categorias)
