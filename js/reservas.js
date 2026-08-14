@@ -13,7 +13,7 @@ async function carregarSelectCategorias() {
     if (!select) return;
 
     try {
-        const resposta = await fetch('http://127.0.0.1:5000/api/v1/tipos_quarto');
+        const resposta = await fetch('http://localhost:3000/api/v1/tipos_quarto');
         
         if (resposta.ok) {
             const tipos = await resposta.json();
@@ -35,19 +35,23 @@ async function carregarSelectCategorias() {
 async function enviarReserva(event) {
     event.preventDefault();
 
+    // Recupera o cliente logado do localStorage
+    const clienteLogado = JSON.parse(localStorage.getItem('cliente_logado') || '{}');
+
     // Cria o objeto JSON com os dados preenchidos pelo cliente
     const dadosReserva = {
+        idCliente: clienteLogado.usuario ? clienteLogado.usuario.idCliente : 1, // Substitua pelo ID real do cliente logado
         nome_cliente: document.getElementById('nome_cliente').value,
         idTipoQuarto: parseInt(document.getElementById('tipo_quarto').value),
-        data_in: document.getElementById('data_in').value,
-        data_out: document.getElementById('data_out').value,
-        adultos: parseInt(document.getElementById('adultos').value),
-        criancas: parseInt(document.getElementById('criancas').value),
+        data_CheckIn: document.getElementById('data_in').value,
+        data_CheckOut: document.getElementById('data_out').value,
+        qnt_adultos: parseInt(document.getElementById('adultos').value),
+        qnt_criancas: parseInt(document.getElementById('criancas').value),
         com_cafe: document.getElementById('com_cafe').checked
     };
 
     try {
-        const resposta = await fetch('http://127.0.0.1:5000/api/v1/reservas', {
+        const resposta = await fetch('http://localhost:3000/api/v1/reservas', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

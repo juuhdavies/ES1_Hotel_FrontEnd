@@ -20,47 +20,58 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 async function carregarMapa() {
-    const dataFiltro = document.getElementById('filtro-data-mapa').value || new Date().toISOString().split('T')[0];
-    
+    // Obtém a data do filtro ou usa a data atual se não houver filtro
+    const inputFiltro = document.getElementById('filtro-data-mapa');
+    const dataFiltro = (inputFiltro && inputFiltro.value) ? inputFiltro.value : new Date().toISOString().split('T')[0];
     try {
-        const resposta = await fetch(`http://127.0.0.1:5000/api/v1/mapa?data_filtro=${dataFiltro}`);
-        const quartos = await resposta.json();
+        const resposta = await fetch(`http://localhost:3000/api/v1/mapa?data_filtro=${dataFiltro}`);
         
-        mapaQuartosCache = quartos; // Guarda no cache para consultar depois
         
-        const tbody = document.getElementById('tabela-mapa');
-        const selectCheckin = document.getElementById('quarto_alocado');
-        const selectCheckout = document.getElementById('quarto_checkout');
+        if (resposta.ok) {
+            const json = await resposta.json();
+            const quartos = json.quartos || [];
+            mapaQuartosCache = quartos; // Guarda no cache para consultar depois
         
-        tbody.innerHTML = '';
-        selectCheckin.innerHTML = '<option value="" disabled selected>Selecione um quarto livre...</option>';
-        selectCheckout.innerHTML = '<option value="" disabled selected>Selecione um quarto ocupado...</option>';
+            const tbody = document.getElementById('tabela-mapa');
+            const selectCheckin = document.getElementById('quarto_alocado');
+            const selectCheckout = document.getElementById('quarto_checkout');
+        
+            tbody.innerHTML = '';
+            selectCheckin.innerHTML = '<option value="" disabled selected>Selecione um quarto livre...</option>';
+            selectCheckout.innerHTML = '<option value="" disabled selected>Selecione um quarto ocupado...</option>';
 
-        // Preenche a tabela e os selects com base no status dos quartos
-        quartos.forEach(q => {
-            let badgeClass = q.status === 'Livre' ? 'bg-success' : (q.status === 'Reservado' ? 'bg-warning text-dark' : 'bg-danger');
-            tbody.innerHTML += `
-                <tr>
-                    <td class="fw-bold">${q.numero_quarto}</td>
-                    <td><span class="badge ${badgeClass}">${q.status}</span></td>
-                    <td>${q.nome_hospede || '-'}</td>
-                    <td>${q.previsao_checkout || '-'}</td>
-                </tr>
-            `;
+            // Preenche a tabela e os selects com base no status dos quartos
+            quartos.forEach(q => {
+                const statusQuarto = q.status || 'Livre'; // Default para 'Livre' se não houver status
+                let badgeClass = q.status === 'Livre' ? 'bg-success' : (q.status === 'Reservado' ? 'bg-warning text-dark' : 'bg-danger');
+                
+                if(tbody) {
+                tbody.innerHTML += `
+                    <tr>
+                        <td class="fw-bold">${q.numero_quarto}</td>
+                        <td><span class="badge ${badgeClass}">${q.status}</span></td>
+                        <td>${q.nome_hospede || '-'}</td>
+                        <td>${q.previsao_checkout || '-'}</td>
+                    </tr>
+                `;
+                }
 
-            if (q.status === 'Livre') {
-                selectCheckin.innerHTML += `<option value="${q.numero_quarto}">Quarto ${q.numero_quarto}</option>`;
-            }
+                if (q.status === 'Livre' && selectCheckin) {
+                    selectCheckin.innerHTML += `<option value="${q.numero_quarto}">Quarto ${q.numero_quarto}</option>`;
+                }
 
-            if (q.status === 'Ocupado') {
-                // Passamos o ID ou número do quarto no value
-                selectCheckout.innerHTML += `<option value="${q.numero_quarto}">Quarto ${q.numero_quarto} (${q.nome_hospede})</option>`;
-            }
-        });
+                if (q.status === 'Ocupado' && selectCheckout) {
+                    // Passamos o ID ou número do quarto no value
+                    selectCheckout.innerHTML += `<option value="${q.numero_quarto}">Quarto ${q.numero_quarto} (${q.nome_hospede})</option>`;
+                }
+            });
 
-        // Reseta os campos visuais de preço ao recarregar o mapa
-        document.getElementById('info-consumo').textContent = 'R$ 0.00';
-        document.getElementById('info-total').textContent = 'R$ 0.00';
+            //reseta campos de consumo e total no checkout quando o mapa é recarregado
+            const elemConsumo = document.getElementById('info-consumo');
+            const elemTotal = document.getElementById('info-total');
+            if(elemConsumo) elemConsumo.textContent = 'R$ 0.00';
+            if(elemTotal) elemTotal.textContent = 'R$ 0.00';
+        }
 
     } catch (erro) {
         console.error("Erro ao carregar mapa:", erro);
@@ -72,16 +83,21 @@ function atualizarValoresCheckout() {
     const numeroQuartoSelecionado = parseInt(document.getElementById('quarto_checkout').value);
     
     // Procura o quarto correspondente nos dados que vieram do banco de dados
-    const quartoEncontrado = mapaQuartosCache.find(q => q.numero_quarto === numeroQuartoSelecionado);
+    const quartoEncontrado = mapaQuartosCache.find(q => 
+        q.idQuarto == valSelecionado || q.num_quarto == valSelecionado || q.numero_quarto == valSelecionado
+    );
 
     if (quartoEncontrado) {
         // Assume que a API retorna os campos 'valor_consumo' e 'valor_total' (ou calcula na hora)
         // Valor consumo seria pra quando o hospede faz "compras" de itens não inclusos na hospedagem e é somado ao valor de consumo a cada "compra"
-        const consumo = quartoEncontrado.valor_consumo || 0.0;
-        const total = quartoEncontrado.valor_total || consumo; // Soma da hospedagem + consumo vinda do BD
+       const consumo = parseFloat(quartoEncontrado.valor_Consumacao || quartoEncontrado.valor_consumo || 0.0);
+        const total = parseFloat(quartoEncontrado.valor_total || quartoEncontrado.valor_Reserva || consumo);
 
-        document.getElementById('info-consumo').textContent = `€ ${consumo.toFixed(2)}`;
-        document.getElementById('info-total').textContent = `€ ${total.toFixed(2)}`;
+        const elemConsumo = document.getElementById('info-consumo');
+        const elemTotal = document.getElementById('info-total');
+
+        if (elemConsumo) elemConsumo.textContent = `R$ ${consumo.toFixed(2)}`;
+        if (elemTotal) elemTotal.textContent = `R$ ${total.toFixed(2)}`;
     }
 }
 
@@ -90,12 +106,12 @@ async function realizarCheckout(event) {
     const alerta = document.getElementById('alerta-checkout');
 
     const dados = {
-        numero_quarto: parseInt(document.getElementById('quarto_checkout').value)
+        idQuarto: parseInt(document.getElementById('quarto_checkout').value)
     };
 
     // Envia os dados para a API do Back-end para processar o check-out
     try {
-        const resposta = await fetch('http://127.0.0.1:5000/api/v1/checkout', {
+        const resposta = await fetch('http://localhost:3000/api/v1/checkout', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(dados)
@@ -105,9 +121,10 @@ async function realizarCheckout(event) {
         if (resposta.ok) {
             alerta.className = 'alert alert-success small p-2 text-center mt-3';
             alerta.textContent = 'Check-out processado com sucesso!';
-            document.getElementById('form-checkout').reset();
-            document.getElementById('info-consumo').textContent = 'R$ 0.00';
-            document.getElementById('info-total').textContent = 'R$ 0.00';
+            const elemConsumo = document.getElementById('info-consumo');
+            const elemTotal = document.getElementById('info-total');
+            if (elemConsumo) elemConsumo.textContent = 'R$ 0.00';
+            if (elemTotal) elemTotal.textContent = 'R$ 0.00';
             carregarMapa(); 
         } else {
             alerta.className = 'alert alert-danger small p-2 text-center mt-3';

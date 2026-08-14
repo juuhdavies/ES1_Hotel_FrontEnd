@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             try {
                 // Envia os dados para a API do Back-end
-                const resposta = await fetch('http://127.0.0.1:5000/api/v1/login/cliente', {
+                const resposta = await fetch('http://localhost:3000/api/v1/login/cliente', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -26,10 +26,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     alertaErro.classList.add('d-none');
                     
                     // Salva a identificação do cliente
-                    localStorage.setItem('cliente_logado', JSON.stringify(dados));
+                    localStorage.setItem('cliente_logado', JSON.stringify(json.usuario || json.cliente));
                     window.location.href = 'index.html';
                 } else {
                     alertaErro.classList.remove('d-none');
+                    alertaErro.textContent = "E-mail ou senha incorretos.";
                 }
             } catch (erro) {
                 console.error("Erro na requisição:", erro);

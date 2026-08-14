@@ -29,7 +29,7 @@ async function carregarReservasCliente(idCliente) {
 
     try {
         // Requisição GET para a API passando o ID do cliente logado
-        const resposta = await fetch(`http://127.0.0.1:5000/api/v1/clientes/${idCliente}/reservas`);
+        const resposta = await fetch(`http://localhost:3000/api/v1/clientes/${idCliente}/reservas`);
         
         if (resposta.ok) {
             const reservas = await resposta.json();
@@ -50,8 +50,8 @@ async function carregarReservasCliente(idCliente) {
                     <tr>
                         <td class="fw-bold text-primary">#${r.idReserva || r.numero_reserva}</td>
                         <td>${r.nome_tipoQuarto || 'Acomodação Standard'}</td>
-                        <td>${r.data_in}</td>
-                        <td>${r.data_out}</td>
+                        <td>${r.data_CheckIn}</td>
+                        <td>${r.data_CheckOut}</td>
                         <td><span class="badge ${badgeClass}">${r.estado || 'Ativa'}</span></td>
                     </tr>
                 `;

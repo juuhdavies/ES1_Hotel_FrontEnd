@@ -11,14 +11,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
             try {
                 // Envia os dados para a API do Back-end
-                const resposta = await fetch('http://127.0.0.1:5000/api/v1/login/colaborador', {
+                const resposta = await fetch('http://localhost:3000/api/v1/login/colaborador', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        idLogin: idDigitado,
-                        SenhaFuncionario: senhaDigitada
+                        login: idDigitado,     
+                        senha: senhaDigitada    
                     })
                 });
 
@@ -27,15 +25,17 @@ document.addEventListener('DOMContentLoaded', function() {
                     alertaErro.classList.add('d-none');
                     
                     // Salva os dados do funcionário na sessão do navegador
-                    localStorage.setItem('colaborador_logado', JSON.stringify(dados));
+                    const funcionario = json.funcionario;
+                    localStorage.setItem('colaborador_logado', JSON.stringify(funcionario));
 
-                    if (dados.FuncaoFuncionario === 'Gerente') {
+                    if (funcionario && funcionario.FuncaoFuncionario === 'Gerente') {
                         window.location.href = 'painel_gerencia.html';
                     } else {
                         window.location.href = 'painel_recepcao.html';
                     }
                 } else {
                     alertaErro.classList.remove('d-none');
+                    alertaErro.textContent = "ID ou senha incorretos.";
                 }
             } catch (erro) {
                 console.error("Erro na requisição:", erro);

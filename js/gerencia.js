@@ -41,14 +41,16 @@ async function buscarFaturamento(event) {
     const dataFim = document.getElementById('data_fim').value;
 
     try {
-        const resposta = await fetch(`http://127.0.0.1:5000/api/v1/faturamento?data_inicio=${dataInicio}&data_fim=${dataFim}`); // Pega os dados de faturamento do back-end com base nas datas fornecidas
+        const resposta = await fetch(`http://localhost:3000/api/v1/faturamento?data_inicio=${dataInicio}&data_fim=${dataFim}`); // Pega os dados de faturamento do back-end com base nas datas fornecidas
         
         if (resposta.ok) {
-            const dados = await resposta.json();
+            const json = await resposta.json();
+            const relatorio = json.relatorio;
+
             // Atualiza os elementos visuais com os valores retornados pela API
-            document.getElementById('valor-hospedagem').textContent = `R$ ${dados.total_hospedagem.toFixed(2)}`;
-            document.getElementById('valor-salas').textContent = `R$ ${dados.total_salas.toFixed(2)}`;
-            document.getElementById('valor-total').textContent = `R$ ${dados.total_geral.toFixed(2)}`;
+            document.getElementById('valor-hospedagem').textContent = `R$ ${parseFloat(relatorio.total_diarias).toFixed(2)}`;
+            document.getElementById('valor-salas').textContent = `R$ ${parseFloat(relatorio.total_consumo).toFixed(2)}`;
+            document.getElementById('valor-total').textContent = `R$ ${parseFloat(relatorio.faturamento_total).toFixed(2)}`;
         } else {
             console.error("Erro ao buscar dados de faturamento");
         }
@@ -62,7 +64,7 @@ async function buscarFaturamento(event) {
 
 async function carregarTiposQuarto() {
     try {
-        const resposta = await fetch('http://127.0.0.1:5000/api/v1/tipos_quarto'); // Pega os tipos de quarto do back-end
+        const resposta = await fetch('http://localhost:3000/api/v1/tipos_quarto'); // Pega os tipos de quarto do back-end
         const tipos = await resposta.json();
         const tbody = document.getElementById('tabela-tipos-quarto'); 
         if (!tbody) return;
@@ -134,7 +136,7 @@ async function salvarTipoQuarto(event) {
     };
 
     const metodo = id ? 'PUT' : 'POST'; // se id existe, é uma atualização , caso contrário, é uma criação 
-    const url = id ? `http://127.0.0.1:5000/api/v1/tipos_quarto/${id}` : 'http://127.0.0.1:5000/api/v1/tipos_quarto'; 
+    const url = id ? `http://localhost:3000/api/v1/tipos_quarto/${id}` : 'http://localhost:3000/api/v1/tipos_quarto'; 
 
     try {
         const resposta = await fetch(url, {
@@ -163,7 +165,7 @@ async function salvarTipoQuarto(event) {
 
 async function carregarQuartosFisicos() {
     try {
-        const resposta = await fetch('http://127.0.0.1:5000/api/v1/quartos');
+        const resposta = await fetch('http://localhost:3000/api/v1/quartos');
         const quartos = await resposta.json();
         const tbody = document.getElementById('tabela-quartos');
         if (!tbody) return;
@@ -216,7 +218,7 @@ async function salvarQuarto(event) {
     };
 
     const metodo = id ? 'PUT' : 'POST'; // se id existe, é uma atualização , caso contrário, é uma criação
-    const url = id ? `http://127.0.0.1:5000/api/v1/quartos/${id}` : 'http://127.0.0.1:5000/api/v1/quartos';
+    const url = id ? `http://localhost:3000/api/v1/quartos/${id}` : 'http://localhost:3000/api/v1/quartos';
 
     try {
         const resposta = await fetch(url, {
@@ -245,7 +247,7 @@ async function salvarQuarto(event) {
 
 async function carregarSalas() {
     try {
-        const resposta = await fetch('http://127.0.0.1:5000/api/v1/salas');
+        const resposta = await fetch('http://localhost:3000/api/v1/salas');
         const salas = await resposta.json();
         const tbody = document.getElementById('tabela-salas');
         if (!tbody) return;
@@ -300,7 +302,7 @@ async function salvarSala(event) {
     };
 
     const metodo = id ? 'PUT' : 'POST'; // se id existe, é uma atualização , caso contrário, é uma criação
-    const url = id ? `http://127.0.0.1:5000/api/v1/salas/${id}` : 'http://127.0.0.1:5000/api/v1/salas'; 
+    const url = id ? `http://localhost:3000/api/v1/salas/${id}` : 'http://localhost:3000/api/v1/salas'; 
 
     try {
         const resposta = await fetch(url, {

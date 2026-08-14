@@ -8,10 +8,11 @@ async function carregarVitrineQuartos() {
 
     try {
         // Chamada GET para buscar os quartos ou tipos de quarto disponíveis
-        const resposta = await fetch('http://127.0.0.1:5000/api/v1/quartos');
+        const resposta = await fetch('http://localhost:3000/api/v1/quartos');
         
         if (resposta.ok) {
-            const quartos = await resposta.json();
+            const json = await resposta.json();
+            const quartos = json.dados || []; // Caso a API retorne um objeto com a chave "dados", usamos isso, senão assumimos que é uma lista direta
             container.innerHTML = '';
 
             if (quartos.length === 0) {
