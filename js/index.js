@@ -8,7 +8,7 @@ async function carregarVitrineQuartos() {
 
     try {
         // Chamada GET para buscar os quartos ou tipos de quarto disponíveis
-        const resposta = await fetch('http://localhost:3000/api/v1/quartos');
+        const resposta = await fetch('http://localhost:3000/api/v1/tipos_quarto');
         
         if (resposta.ok) {
             const json = await resposta.json();
@@ -22,16 +22,21 @@ async function carregarVitrineQuartos() {
 
             quartos.forEach(q => {
                 // Cria um card para cada acomodação
+                const preco = parseFloat(q.valor_base || 0).toFixed(2);
                 container.innerHTML += `
-                    <div class="col-md-4">
+                    <div class="col-md-4 mb-4">
                         <div class="card shadow-sm border-0 h-100">
                             <div class="card-body d-flex flex-column">
-                                <h5 class="fw-bold text-dark">Quarto ${q.num_quarto || q.numero_quarto}</h5>
-                                <p class="text-muted small mb-2">Categoria: ${q.nome_tipoQuarto || 'Standard'}</p>
-                                <p class="text-primary fw-bold fs-5 mb-4">€ ${q.valor_base ? q.valor_base.toFixed(2) : '100.00'} <span class="small text-muted fw-normal">/ noite</span></p>
-                                <div class="mt-auto">
-                                    <a href="reservas.html" class="btn btn-outline-primary w-100 btn-sm">Reservar Este</a>
-                                </div>
+                                <h5 class="fw-bold text-dark">${q.nome_tipoQuarto}</h5>
+                                <p class="text-muted small mb-2">
+                                    Capacidade: até ${q.limite_adultos} adulto(s) e ${q.limite_criancas} criança(s)
+                                </p>
+                                <p class="text-primary fw-bold fs-5 mb-4">
+                                    $ ${preco} <span class="small text-muted fw-normal">/ noite</span>
+                                </p>
+                                <a href="reservas.html" class="btn btn-outline-primary w-100 btn-sm">
+                                    Fazer Reserva
+                                </a>
                             </div>
                         </div>
                     </div>

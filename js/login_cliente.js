@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
 
                 if (resposta.ok) {
-                    const dados = await resposta.json();
+                    const json = await resposta.json();
                     alertaErro.classList.add('d-none');
                     
                     // Salva a identificação do cliente
