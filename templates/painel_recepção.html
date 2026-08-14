@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Recepção - Hotel Elfsong</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .sidebar { min-height: 100vh; width: 250px; background-color: #212529; }
+        .sidebar a { color: rgba(255, 255, 255, 0.75); text-decoration: none; display: block; padding: 10px; margin-bottom: 5px; border-radius: 5px; }
+        .sidebar a.active, .sidebar a:hover { background-color: rgba(255,255,255,0.1); color: #fff; }
+    </style>
+</head>
+<body class="d-flex bg-light">
+
+    <div class="sidebar p-3 shadow">
+        <h5 class="text-white fw-bold mb-4 border-bottom border-secondary pb-3">Hotel Elfsong</h5>
+        <a href="painel_recepcao.html" class="active"> Recepção / Mapa</a>
+        <a href="painel_gerencia.html"> Painel Gerência</a>
+        <a href="login_colaborador.html" class="text-danger mt-5"> Sair</a>
+    </div>
+
+    <!-- Conteúdo -->
+    <div class="flex-grow-1 p-4 h-100 overflow-auto">
+        <h3 class="fw-bold text-dark mb-4">Painel da Recepção</h3>
+        
+        <div class="row g-4">
+            <!-- Mapa de Ocupação -->
+            <div class="col-md-8">
+                <div class="card shadow-sm border-0">
+                    <div class="card-header bg-white pt-3 border-0 d-flex justify-content-between align-items-center">
+                        <h5 class="fw-bold m-0">Mapa de Quartos</h5>
+                        <input type="date" id="filtro-data-mapa" class="form-control w-auto">
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Quarto</th>
+                                    <th>Status</th>
+                                    <th>Hóspede</th>
+                                    <th>Check-out</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabela-mapa">
+                                <tr><td colspan="4" class="text-center text-muted">Carregando mapa...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-4 col-lg-5 d-flex flex-column gap-4">
+                
+                <!-- Card Check-in -->
+                <div class="card shadow-sm border-0 border-start border-4 border-success">
+                    <div class="card-body p-4">
+                        <h5 class="fw-bold text-success mb-3">Registrar Check-In</h5>
+                        <form id="form-checkin">
+                            <div class="mb-3">
+                                <label class="form-label small">ID da Reserva</label>
+                                <input type="number" id="id_reserva" class="form-control form-control-sm" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label small">Documento do Hóspede</label>
+                                <input type="text" id="doc_hospede" class="form-control form-control-sm" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label small">Quarto Atribuído</label>
+                                <select id="quarto_alocado" class="form-select form-select-sm" required>
+                                    <option value="" disabled selected>Carregando quartos livres...</option>
+                                </select>
+                            </div>
+                            
+                            <div id="alerta-checkin" class="alert d-none small p-2 text-center"></div>
+
+                            <button type="submit" class="btn btn-success btn-sm w-100 fw-bold">Confirmar Entrada</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Card Check-out -->
+                <div class="card shadow-sm border-0 border-start border-4 border-danger">
+                    <div class="card-body p-4">
+                        <h5 class="fw-bold text-danger mb-3">Registrar Check-Out</h5>
+                        <form id="form-checkout">
+                            <div class="mb-3">
+                                <label class="form-label small">Quarto a Liberar</label>
+                                <select id="quarto_checkout" class="form-select form-select-sm" required>
+                                    <option value="" disabled selected>Carregando ocupações...</option>
+                                </select>
+                            </div>
+                            
+                            <!-- Campo informativo que mostra o consumo registrado no BD -->
+                            <div class="mb-3 p-3 bg-light rounded border">
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span class="small text-muted">Consumo Registrado:</span>
+                                    <strong id="info-consumo" class="text-dark">€ 0.00</strong>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <span class="small text-muted">Total a Pagar:</span>
+                                    <strong id="info-total" class="text-danger fs-5">€ 0.00</strong>
+                                </div>
+                            </div>
+                            
+                            <div id="alerta-checkout" class="alert d-none small p-2 text-center"></div>
+
+                            <button type="submit" class="btn btn-danger btn-sm w-100 fw-bold">Processar Saída e Fechar Conta</button>
+                        </form>
+                    </div>
+                </div>
+            
+        </div>
+    </div>
+
+
+    <script src="../js/recepcao.js"></script>
+</body>
+</html>

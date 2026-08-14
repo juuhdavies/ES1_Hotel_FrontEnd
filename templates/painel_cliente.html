@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Minhas Reservas - Hotel Elfsong</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head> 
+<body class="d-flex flex-column min-vh-100 bg-light">
+
+    <header>
+        <nav class="navbar navbar-expand-md navbar-dark bg-dark">
+            <div class="container-fluid">
+                <a class="navbar-brand fw-bold" href="index.html">Hotel Elfsong</a>
+                <div class="collapse navbar-collapse">
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item"><a class="nav-link" href="index.html">Início & Quartos</a></li>
+                        <li class="nav-item"><a class="nav-link" href="reservas.html">Realize sua Reserva</a></li>
+                        <li class="nav-item"><a class="nav-link active" href="painel_cliente.html">Minhas Reservas</a></li>
+                    </ul>
+                    <ul class="navbar-nav">
+                        <li class="nav-item"><a class="nav-link btn btn-outline-danger btn-sm px-3" href="#" id="btn-sair">Sair</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mt-4 mb-5 flex-grow-1">
+        <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-2">
+            <div>
+                <h2 class="fw-bold text-dark">Minhas Reservas</h2>
+                <p class="text-muted m-0">Acompanhe o histórico e os números de reserva associados à sua conta.</p>
+            </div>
+            <a href="reservas.html" class="btn btn-primary">Nova Reserva</a>
+        </div>
+
+        <!-- Tabela de Reservas do Cliente -->
+        <div class="card shadow-sm border-0">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Nº da Reserva</th>
+                                <th>Categoria do Quarto</th>
+                                <th>Check-in</th>
+                                <th>Check-out</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabela-minhas-reservas">
+                            <tr><td colspan="5" class="text-center text-muted">A carregar as suas reservas...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="../js/cliente.js"></script>
+</body>
+</html>
