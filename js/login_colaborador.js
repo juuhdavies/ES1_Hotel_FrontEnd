@@ -3,14 +3,14 @@ document.addEventListener('DOMContentLoaded', function() {
     
     if (formColaborador) {
         formColaborador.addEventListener('submit', async function(event) {
-            event.preventDefault(); // Impede o recarregamento padrão da página
+            event.preventDefault();
 
             const idDigitado = document.getElementById('id').value;
             const senhaDigitada = document.getElementById('senha').value;
             const alertaErro = document.getElementById('alerta-erro-colab');
 
             try {
-                // Envia os dados para a API do Back-end
+                // Envia as credenciais para a API Flask
                 const resposta = await fetch('http://localhost:3000/api/v1/login/colaborador', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -21,13 +21,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
 
                 if (resposta.ok) {
-                    const dados = await resposta.json();
+                    const json = await resposta.json(); // Corrigido de 'dados' para 'json'
                     alertaErro.classList.add('d-none');
                     
-                    // Salva os dados do funcionário na sessão do navegador
+                    // Salva os dados do funcionário no localStorage
                     const funcionario = json.funcionario;
                     localStorage.setItem('colaborador_logado', JSON.stringify(funcionario));
 
+                    // Redireciona com base na função do colaborador
                     if (funcionario && funcionario.FuncaoFuncionario === 'Gerente') {
                         window.location.href = 'painel_gerencia.html';
                     } else {
